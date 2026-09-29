@@ -9,6 +9,7 @@ export interface ApprovalDocument {
   title: string;
   status: ApprovalStatus;
   reason: string | null;
+  decidedBy: string | null;
   createdAt: string;
   decidedAt: string | null;
 }

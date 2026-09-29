@@ -63,6 +63,13 @@ export class ApprovalList implements OnInit {
     return this.selected().size > 0;
   }
 
+  get pageTitle(): string {
+    const action = this.pendingAction();
+    if (action === 'approve') return 'IT 03-2';
+    if (action === 'reject') return 'IT 03-3';
+    return 'IT 03-1';
+  }
+
   openModal(action: DecisionAction): void {
     if (!this.hasSelection) return;
     this.pendingAction.set(action);

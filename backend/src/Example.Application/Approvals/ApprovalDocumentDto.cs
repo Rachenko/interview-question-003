@@ -7,6 +7,7 @@ public record ApprovalDocumentDto(
     string Title,
     ApprovalStatus Status,
     string? Reason,
+    string? DecidedBy,
     DateTime CreatedAt,
     DateTime? DecidedAt);
 

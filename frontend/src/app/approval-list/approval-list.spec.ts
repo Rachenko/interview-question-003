@@ -7,10 +7,10 @@ import { ApprovalDocument } from '../approval.service';
 const API = '/api/approval-documents';
 
 const MOCK_DOCS: ApprovalDocument[] = [
-  { id: 1, title: 'รายการที่ 1', status: 'Pending', reason: 'xxxxx', createdAt: '', decidedAt: null },
-  { id: 2, title: 'รายการที่ 2', status: 'Approved', reason: 'xxxxx', createdAt: '', decidedAt: '' },
-  { id: 3, title: 'รายการที่ 3', status: 'Rejected', reason: 'xxxxx', createdAt: '', decidedAt: '' },
-  { id: 4, title: 'รายการที่ 4', status: 'Pending', reason: 'xxxxx', createdAt: '', decidedAt: null },
+  { id: 1, title: 'รายการที่ 1', status: 'Pending', reason: null, decidedBy: null, createdAt: '', decidedAt: null },
+  { id: 2, title: 'รายการที่ 2', status: 'Approved', reason: 'xxxxx', decidedBy: 'admin', createdAt: '', decidedAt: '' },
+  { id: 3, title: 'รายการที่ 3', status: 'Rejected', reason: 'xxxxx', decidedBy: 'admin', createdAt: '', decidedAt: '' },
+  { id: 4, title: 'รายการที่ 4', status: 'Pending', reason: null, decidedBy: null, createdAt: '', decidedAt: null },
 ];
 
 describe('ApprovalList', () => {
@@ -31,11 +31,18 @@ describe('ApprovalList', () => {
 
   afterEach(() => http.verify());
 
+  it('shows IT 03-1 on the main page', async () => {
+    const fixture = await setup();
+
+    expect(fixture.nativeElement.querySelector('.header').textContent.trim()).toBe('IT 03-1');
+  });
+
   it('renders rows with Thai status labels', async () => {
     const fixture = await setup();
     const rows = fixture.nativeElement.querySelectorAll('tbody tr');
     expect(rows.length).toBe(4);
     expect(rows[0].textContent).toContain('รออนุมัติ');
+    expect(rows[0].textContent).toContain('-');
     expect(rows[1].textContent).toContain('อนุมัติ');
     expect(rows[2].textContent).toContain('ไม่อนุมัติ');
   });
@@ -75,6 +82,7 @@ describe('ApprovalList', () => {
     component.toggle(MOCK_DOCS[3]);
     component.openModal('approve');
     fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.header').textContent.trim()).toBe('IT 03-2');
 
     const modal = fixture.nativeElement.querySelector('.modal');
     expect(modal).toBeTruthy();
@@ -95,6 +103,8 @@ describe('ApprovalList', () => {
     const component = fixture.componentInstance;
     component.toggle(MOCK_DOCS[0]);
     component.openModal('reject');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.header').textContent.trim()).toBe('IT 03-3');
     component.confirmDecision('no');
 
     const req = http.expectOne(`${API}/reject`);
@@ -108,8 +118,12 @@ describe('ApprovalList', () => {
     const component = fixture.componentInstance;
     component.toggle(MOCK_DOCS[0]);
     component.openModal('approve');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.header').textContent.trim()).toBe('IT 03-2');
+
     component.closeModal();
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.modal')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.header').textContent.trim()).toBe('IT 03-1');
   });
 });

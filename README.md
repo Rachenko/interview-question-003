@@ -10,9 +10,9 @@
 
 ```
 backend/
-  src/Example.Domain          — Entities (ApprovalDocument), Enums (ApprovalStatus)
+  src/Example.Domain          — Entities (ApprovalDocument, ApprovalDecision, ApprovalDecisionItem), Enums
   src/Example.Application     — Business logic (ApprovalService), DTOs, Result types
-  src/Example.Infrastructure  — EF Core DbContext, Npgsql, Seed data
+  src/Example.Infrastructure  — EF Core DbContext, Npgsql, PostgreSQL init SQL
   src/Example.Api             — Controllers, Program.cs, CORS
   tests/Example.UnitTests     — xUnit + EF InMemory + FluentAssertions (10 tests)
 frontend/                     — Angular 22 app (vitest unit tests, 8 tests)
@@ -37,7 +37,34 @@ git clone <repo-url> interview-question-003
 cd interview-question-003
 ```
 
-### 1. รัน Database (PostgreSQL ผ่าน Docker)
+### 1. รัน Database แบบ Local (แนะนำ)
+
+วิธีนี้รันทั้ง Database, Backend และ Frontend บนเครื่อง local โดยไม่ใช้ Docker
+
+ติดตั้งและเปิด PostgreSQL บนเครื่อง จากนั้นตั้งค่าให้ตรงกับ `appsettings.json`:
+
+```text
+Host=localhost
+Port=5432
+Database=example_approval
+Username=postgres
+Password=postgres
+```
+
+สร้าง database และรัน schema + mock data ด้วย `psql`:
+
+```powershell
+psql -h localhost -U postgres -c "CREATE DATABASE example_approval;"
+psql -h localhost -U postgres -d example_approval -f "backend\src\Example.Infrastructure\Persistence\seed.sql"
+```
+
+ถ้าไม่มีคำสั่ง `psql` สามารถเปิดไฟล์ `seed.sql` แล้วรันผ่าน pgAdmin Query Tool ได้ โดยต้องสร้าง database ชื่อ `example_approval` ก่อน
+
+> วิธี Local ต้องรัน `seed.sql` ด้วยตนเองหนึ่งครั้ง
+
+### 1.1 ทางเลือก: รัน Database ผ่าน Docker
+
+วิธีนี้ใช้ Docker เฉพาะ PostgreSQL ส่วน Backend และ Frontend ยังรันบนเครื่อง local
 
 ```bash
 docker compose up -d
@@ -46,6 +73,19 @@ docker compose up -d
 Postgres จะรันที่ `localhost:5432` (user/pass: `postgres/postgres`, db: `example_approval`)
 
 > ถ้า port 5432 ถูกใช้อยู่แล้ว แก้ `ports` ใน `docker-compose.yml` แล้วปรับ `ConnectionStrings:Default` ใน `backend/src/Example.Api/appsettings.json` ให้ตรงกัน
+
+Docker จะรัน `backend/src/Example.Infrastructure/Persistence/seed.sql` เป็น PostgreSQL init script ตอนสร้าง database ครั้งแรก โดย SQL script จะสร้างตาราง, index และข้อมูล mockup 10 รายการโดยตรง
+
+ถ้าเคยรันมาก่อนและต้องการให้ init script ทำงานใหม่ ให้ลบ database volume แล้วเริ่มใหม่:
+
+```bash
+docker compose down -v
+docker compose up -d
+```
+
+สถานะเริ่มต้นตาม mockup: รายการ 2,5 = อนุมัติ / 3,6 = ไม่อนุมัติ / ที่เหลือ = รออนุมัติ
+
+`seed.sql` แยกข้อมูลการตัดสินใจไว้ใน `ApprovalDecisions` และ `ApprovalDecisionItems` โดยใช้ `DecidedBy = 'admin'` เป็น dummy user; รายการที่รออนุมัติจะยังไม่มี decision
 
 ### 2. รัน Backend
 
@@ -57,8 +97,6 @@ dotnet run
 
 API จะรันที่ `http://localhost:5204`
 
-- ตอน startup ระบบจะ `EnsureCreated` สร้างตาราง + seed ข้อมูล mockup 10 รายการ (รายการที่ 1–10) อัตโนมัติ
-- สถานะเริ่มต้นตาม mockup: รายการ 2,5 = อนุมัติ / 3,6 = ไม่อนุมัติ / ที่เหลือ = รออนุมัติ
 - OpenAPI spec อยู่ที่ `http://localhost:5204/openapi/v1.json`
 
 ทดสอบ API เร็วๆ:
@@ -90,6 +128,16 @@ cd frontend && ng build
 mkdir -p ../backend/src/Example.Api/wwwroot
 cp -r dist/example-approval-ui/browser/* ../backend/src/Example.Api/wwwroot/
 ```
+
+## โครงสร้างฐานข้อมูล
+
+ระบบใช้ 3 ตารางหลัก:
+
+- `ApprovalDocuments` — ข้อมูลเอกสารและสถานะปัจจุบัน
+- `ApprovalDecisions` — เหตุผล ผู้ตัดสิน และเวลาของการตัดสินใจหนึ่ง batch
+- `ApprovalDecisionItems` — ตารางเชื่อมระหว่าง decision กับเอกสารที่ถูกตัดสิน
+
+หนึ่ง batch จะสร้าง `ApprovalDecisions` เพียง 1 แถว และสร้าง `ApprovalDecisionItems` ตามจำนวนเอกสารที่เลือก จึงไม่เก็บเหตุผลซ้ำในทุกเอกสาร
 
 ## รัน Unit Tests
 
