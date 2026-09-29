@@ -79,7 +79,17 @@ ng serve
 
 เปิดเบราว์เซอร์ที่ `http://localhost:4200`
 
-> Frontend ยิง API ที่ `http://localhost:5204` — ถ้า backend รันพอร์ตอื่น แก้ `baseUrl` ใน `frontend/src/app/approval.service.ts`
+> `ng serve` proxy `/api` → `http://localhost:5204` อัตโนมัติ (`proxy.conf.json`) — ถ้า backend รันพอร์ตอื่น แก้ `target` ในไฟล์นั้น
+
+### 4. (ทางเลือก) รันแบบ single-port
+
+Backend จะเสิร์ฟ Angular build จาก `wwwroot/` — build frontend แล้ว copy ไฟล์เข้า `backend/src/Example.Api/wwwroot/` จากนั้นเปิดแค่ `http://localhost:5204` ก็ใช้ได้ทั้ง UI + API
+
+```bash
+cd frontend && ng build
+mkdir -p ../backend/src/Example.Api/wwwroot
+cp -r dist/example-approval-ui/browser/* ../backend/src/Example.Api/wwwroot/
+```
 
 ## รัน Unit Tests
 
