@@ -12,3 +12,4 @@ frontend/dist/
 .vs/
 .idea/
 .DS_Store
+wwwroot/

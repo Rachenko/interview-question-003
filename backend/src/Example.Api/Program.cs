@@ -24,7 +24,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("Frontend");
+app.UseDefaultFiles();
+app.UseStaticFiles();
 app.MapControllers();
+app.MapFallbackToFile("index.html");
 
 await DatabaseSeeder.SeedAsync(app.Services.CreateScope().ServiceProvider.GetRequiredService<ApplicationDbContext>());
 

@@ -4,7 +4,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ApprovalList } from './approval-list';
 import { ApprovalDocument } from '../approval.service';
 
-const API = 'http://localhost:5204/api/approval-documents';
+const API = '/api/approval-documents';
 
 const MOCK_DOCS: ApprovalDocument[] = [
   { id: 1, title: 'รายการที่ 1', status: 'Pending', reason: 'xxxxx', createdAt: '', decidedAt: null },

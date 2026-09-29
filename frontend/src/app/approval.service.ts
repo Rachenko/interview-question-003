@@ -16,7 +16,7 @@ export interface ApprovalDocument {
 @Injectable({ providedIn: 'root' })
 export class ApprovalService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'http://localhost:5204/api/approval-documents';
+  private readonly baseUrl = '/api/approval-documents';
 
   getAll(): Observable<ApprovalDocument[]> {
     return this.http.get<ApprovalDocument[]>(this.baseUrl);
