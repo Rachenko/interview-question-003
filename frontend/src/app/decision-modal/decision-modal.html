@@ -1,0 +1,15 @@
+<div class="modal-backdrop" (click)="cancel()">
+  <div class="modal" (click)="$event.stopPropagation()" role="dialog" [attr.aria-label]="title">
+    <div class="modal-header">{{ title }}</div>
+    <div class="modal-body">
+      <label for="reason">เหตุผล :</label>
+      <textarea id="reason" name="reason" [(ngModel)]="reason" rows="6"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-confirm" [disabled]="!reason.trim()" (click)="confirm()">
+        {{ confirmLabel }}
+      </button>
+      <button type="button" class="btn btn-cancel" (click)="cancel()">ยกเลิก</button>
+    </div>
+  </div>
+</div>

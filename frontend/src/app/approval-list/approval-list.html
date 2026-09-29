@@ -1,0 +1,63 @@
+<div class="page">
+  <header class="header">IT 03</header>
+
+  <div class="content">
+    <div class="toolbar">
+      <button
+        type="button"
+        class="btn btn-approve"
+        [disabled]="!hasSelection"
+        (click)="openModal('approve')"
+      >
+        อนุมัติ
+      </button>
+      <button
+        type="button"
+        class="btn btn-reject"
+        [disabled]="!hasSelection"
+        (click)="openModal('reject')"
+      >
+        ไม่อนุมัติ
+      </button>
+      @if (errorMessage()) {
+        <span class="error">{{ errorMessage() }}</span>
+      }
+    </div>
+
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th class="col-check"></th>
+          <th>รายการ</th>
+          <th>เหตุผล</th>
+          <th>สถานะเอกสาร</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (doc of documents(); track doc.id) {
+          <tr>
+            <td class="col-check">
+              <input
+                type="checkbox"
+                [checked]="isSelected(doc)"
+                [disabled]="!isSelectable(doc)"
+                (change)="toggle(doc)"
+              />
+            </td>
+            <td>{{ doc.title }}</td>
+            <td>{{ doc.reason }}</td>
+            <td>{{ statusLabel(doc) }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (pendingAction(); as action) {
+    <app-decision-modal
+      [action]="action"
+      (confirmed)="confirmDecision($event)"
+      (cancelled)="closeModal()"
+    />
+  }
+</div>

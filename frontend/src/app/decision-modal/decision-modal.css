@@ -1,0 +1,73 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  width: 640px;
+  max-width: 90vw;
+  background: #fff;
+  border: 1px solid #333;
+  border-radius: 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  background: #4472c4;
+  color: #fff;
+  font-weight: 600;
+  padding: 10px 16px;
+}
+
+.modal-body {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+}
+
+.modal-body label {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.modal-body textarea {
+  flex: 1;
+  border: 1px solid #888;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 0 16px 16px;
+}
+
+.btn {
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px 20px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-confirm {
+  background: #2e75b6;
+}
+
+.btn-cancel {
+  background: #e00000;
+}
