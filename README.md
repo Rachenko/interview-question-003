@@ -113,6 +113,7 @@ curl http://localhost:5204/api/approval-documents
 cd frontend
 npm install
 ng serve
+(หรือถ้าไม่ได้ ใช้ npm.cmd install / npm.cmd start)
 ```
 
 เปิดเบราว์เซอร์ที่ `http://localhost:4200`
