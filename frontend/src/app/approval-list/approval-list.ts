@@ -63,6 +63,27 @@ export class ApprovalList implements OnInit {
     return this.selected().size > 0;
   }
 
+  get selectableDocs(): ApprovalDocument[] {
+    return this.documents().filter((doc) => this.isSelectable(doc));
+  }
+
+  get allSelected(): boolean {
+    const selectable = this.selectableDocs;
+    return selectable.length > 0 && selectable.every((doc) => this.selected().has(doc.id));
+  }
+
+  get someSelected(): boolean {
+    return this.selected().size > 0 && !this.allSelected;
+  }
+
+  toggleAll(): void {
+    if (this.allSelected) {
+      this.selected.set(new Set());
+      return;
+    }
+    this.selected.set(new Set(this.selectableDocs.map((doc) => doc.id)));
+  }
+
   get pageTitle(): string {
     const action = this.pendingAction();
     if (action === 'approve') return 'IT 03-2';

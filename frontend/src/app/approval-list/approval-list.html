@@ -27,7 +27,15 @@
     <table class="doc-table">
       <thead>
         <tr>
-          <th class="col-check"></th>
+          <th class="col-check">
+            <input
+              type="checkbox"
+              [checked]="allSelected"
+              [indeterminate]="someSelected"
+              [disabled]="selectableDocs.length === 0"
+              (change)="toggleAll()"
+            />
+          </th>
           <th>รายการ</th>
           <th>เหตุผล</th>
           <th>สถานะเอกสาร</th>
