@@ -119,6 +119,8 @@ ng serve
 
 > `ng serve` proxy `/api` → `http://localhost:5204` อัตโนมัติ (`proxy.conf.json`) — ถ้า backend รันพอร์ตอื่น แก้ `target` ในไฟล์นั้น
 
+> **Windows + PowerShell:** ถ้า `npm` error `npm.ps1 cannot be loaded because running scripts is disabled` ให้ใช้ `npm.cmd` แทน เช่น `npm.cmd install`, `npm.cmd run dev` หรือตั้งค่า `Set-ExecutionPolicy RemoteSigned -Scope CurrentUser` แล้วเปิด PowerShell ใหม่
+
 ### 4. (ทางเลือก) รันแบบ single-port
 
 Backend จะเสิร์ฟ Angular build จาก `wwwroot/` — build frontend แล้ว copy ไฟล์เข้า `backend/src/Example.Api/wwwroot/` จากนั้นเปิดแค่ `http://localhost:5204` ก็ใช้ได้ทั้ง UI + API
